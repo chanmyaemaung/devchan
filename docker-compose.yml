@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:latest
+    container_name: my_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DATASOURCE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${DATASOURCE_PASSWORD:-postgres}
+      POSTGRES_DB: ${DATASOURCE_DATABASE:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DATASOURCE_PORT:-5432}:5432"
+    networks:
+      - postgres_network
+
+networks:
+  postgres_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
