@@ -8,6 +8,7 @@ import {
   environmentValidationConfig,
 } from '@/config/index';
 import * as process from 'node:process';
+import { ProjectsModule } from '@/domain/projects/projects.module';
 
 const ENV = process.env.NODE_ENV;
 
@@ -37,6 +38,7 @@ const ENV = process.env.NODE_ENV;
         database: configService.get<string>('database.name'),
       }),
     }),
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [],
