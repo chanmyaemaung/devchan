@@ -6,7 +6,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./src",
@@ -20,11 +20,20 @@
       "@/env/*": [
         "env/*"
       ],
-      "@/util/*": [
-        "util/*"
+      "@/auth/*": [
+        "auth/*"
       ],
-      "@/config/*": [
-        "config/*"
+      "@/common/*": [
+        "common/*"
+      ],
+      "@/querying/*": [
+        "querying/*"
+      ],
+      "@/files/*": [
+        "files/*"
+      ],
+      "@/testing/*": [
+        "testing/*"
       ]
     },
     "incremental": true,
