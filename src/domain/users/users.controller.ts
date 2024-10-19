@@ -15,7 +15,12 @@ import { IdDto, PaginationDto } from '@/common/dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    /**
+     * Injecting User Service
+     */
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {

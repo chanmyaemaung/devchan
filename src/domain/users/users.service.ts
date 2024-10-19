@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '@/domain/entities/user.entity';
+import { User } from '@/domain/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { PaginationDto } from '@/common/dto';
 import { DEFAULT_PAGE_SIZE } from '@/common/utils';
@@ -28,11 +28,24 @@ export class UsersService {
     return await this.usersRepository.find({
       skip: offset,
       take: limit ?? DEFAULT_PAGE_SIZE.USER,
+      relations: {
+        projects: true,
+      },
+      order: {
+        registryDates: {
+          createdAt: 'DESC',
+        },
+      },
     });
   }
 
   async findOne(id: number): Promise<User> {
-    const user = await this.usersRepository.findOneBy({ id });
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: {
+        projects: true,
+      },
+    });
     if (!user) throw new NotFoundException('User does not exist');
     return user;
   }
