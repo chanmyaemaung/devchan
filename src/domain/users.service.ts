@@ -4,6 +4,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '@/domain/entities/user.entity';
 import { Repository } from 'typeorm';
+import { PaginationDto } from '@/common/dto';
+import { DEFAULT_PAGE_SIZE } from '@/common/utils';
 
 @Injectable()
 export class UsersService {
@@ -20,8 +22,13 @@ export class UsersService {
     return await this.usersRepository.save(user);
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.usersRepository.find();
+  async findAll(paginationDto: PaginationDto): Promise<User[]> {
+    const { limit, offset } = paginationDto;
+
+    return await this.usersRepository.find({
+      skip: offset,
+      take: limit ?? DEFAULT_PAGE_SIZE.USER,
+    });
   }
 
   async findOne(id: number): Promise<User> {
