@@ -39,8 +39,8 @@ $ pnpm run test:cov
 
 ## Stay in touch
 
-- Author - [CHEN LAY](https://www.linkedin.com/in/chanlay/)
-- Website - [https://chenlay.com](https://chanlay.com)
+- Author - [CHAN LAY](https://www.linkedin.com/in/chanlay/)
+- Website - [https://chanlay.com](https://chanlay.com)
 
 ## License
 
