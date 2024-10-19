@@ -1,7 +1,6 @@
-import { IsInt, IsPositive } from 'class-validator';
+import { IsCardinal } from '@/common/decorators';
 
 export class IdDto {
-  @IsInt()
-  @IsPositive()
+  @IsCardinal()
   id: number;
 }
