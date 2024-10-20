@@ -8,12 +8,7 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class SeedingService {
-  constructor(
-    /**
-     * Injecting Datasource
-     */
-    private readonly dataSource: DataSource,
-  ) {}
+  constructor(private readonly dataSource: DataSource) {}
 
   async seed() {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -24,10 +19,7 @@ export class SeedingService {
       const userRepository = queryRunner.manager.getRepository(User);
       const projectRepository = queryRunner.manager.getRepository(Project);
 
-      // Create fake users
       const users = await this.createFakeUsers(userRepository);
-
-      // Create fake projects
       await this.createFakeProjects(projectRepository, users);
 
       await queryRunner.commitTransaction();
@@ -48,10 +40,7 @@ export class SeedingService {
       user.phone = faker.phone.number();
       user.email = faker.internet.email();
       user.password = await bcrypt.hash('password123', 10);
-      user.registryDates = {
-        createdAt: faker.date.past(),
-        updatedAt: faker.date.recent(),
-      };
+      // We don't need to set registryDates manually, TypeORM will handle it
 
       users.push(await userRepository.save(user));
     }
@@ -73,10 +62,7 @@ export class SeedingService {
           Object.values(ProjectType),
         );
         project.user = user;
-        project.registryDates = {
-          createdAt: faker.date.past(),
-          updatedAt: faker.date.recent(),
-        };
+        // We don't need to set registryDates manually, TypeORM will handle it
 
         await projectRepository.save(project);
       }

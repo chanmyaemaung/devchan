@@ -19,9 +19,15 @@ export class User {
   @Column()
   password: string;
 
-  @OneToMany(() => Project, (project) => project.user, { cascade: true })
+  @OneToMany(() => Project, (project) => project.user, {
+    cascade: ['soft-remove', 'recover'],
+  })
   projects: Project[];
 
   @Column(() => RegistryDates, { prefix: false })
   registryDates: RegistryDates;
+
+  get isDeleted() {
+    return !!this.registryDates.deletedAt;
+  }
 }
