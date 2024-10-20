@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { RegistryDates } from '@/common/embedded';
 import { Project } from '@/domain/projects/entities/project.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class User {
@@ -16,6 +17,7 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Exclude()
   @Column({ select: false })
   password: string;
 
