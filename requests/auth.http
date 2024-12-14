@@ -1,5 +1,7 @@
 @baseUrl = http://localhost:3000
 @contentType = application/json
+@accessToken = {{login.response.body.accessToken}}
+@refreshToken = {{login.response.body.refreshToken}}
 
 ### Register a new user
 POST {{baseUrl}}/auth/register
@@ -13,6 +15,7 @@ Content-Type: {{contentType}}
 }
 
 ### Login
+# @name login
 POST {{baseUrl}}/auth/login
 Content-Type: {{contentType}}
 
@@ -22,7 +25,6 @@ Content-Type: {{contentType}}
 }
 
 ### Refresh Token
-# @name refresh
 POST {{baseUrl}}/auth/refresh
 Authorization: Bearer {{refreshToken}}
 
