@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:3000
+@contentType = application/json
+
+### Register a new user
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "user@example.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "password": "password123"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+
+### Refresh Token
+# @name refresh
+POST {{baseUrl}}/auth/refresh
+Authorization: Bearer {{refreshToken}}
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{accessToken}}
+
+### Create Admin User
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@example.com",
+  "firstName": "Admin",
+  "lastName": "User",
+  "password": "admin123456"
+} 
