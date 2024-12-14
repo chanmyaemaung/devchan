@@ -1,0 +1,96 @@
+@baseUrl = http://localhost:3000/api/v1
+@contentType = application/json
+
+### Login as admin first to get token
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "admin@example.com",
+  "password": "admin123456"
+}
+
+@accessToken = {{login.response.body.accessToken}}
+
+### Create Parent Menu (Header Navigation)
+# @name createParentMenu
+POST {{baseUrl}}/navigation
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Products",
+  "titleMM": "ထုတ်ကုန်များ",
+  "order": 2,
+  "type": "header",
+  "isActive": true
+}
+
+@parentMenuId = {{createParentMenu.response.body.id}}
+
+### Create Child Menu Items
+# @name createChildMenu
+POST {{baseUrl}}/navigation
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+{
+  "title": "New Arrivals",
+  "titleMM": "ထုတ်ကုန်အသစ်များ",
+  "url": "/products/new",
+  "order": 1,
+  "type": "header",
+  "parentId": "{{parentMenuId}}",
+  "isActive": true
+}
+
+### Create Footer Menu
+POST {{baseUrl}}/navigation
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+{
+  "title": "About Us",
+  "titleMM": "ကျွန်ုပ်တို့အကြောင်း",
+  "url": "/about",
+  "order": 1,
+  "type": "footer",
+  "isActive": true
+}
+
+### Get All Navigation Menus
+GET {{baseUrl}}/navigation
+
+### Get Header Navigation Menus
+GET {{baseUrl}}/navigation/type?type=header
+
+### Get Footer Navigation Menus
+GET {{baseUrl}}/navigation/type?type=footer
+
+### Get Specific Menu by ID
+GET {{baseUrl}}/navigation/{{parentMenuId}}
+
+### Update Menu (Change Order and Title)
+PUT {{baseUrl}}/navigation/{{parentMenuId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+{
+  "title": "All Products",
+  "titleMM": "ထုတ်ကုန်အားလုံး",
+  "order": 3
+}
+
+### Hide Menu (Set Inactive)
+PUT {{baseUrl}}/navigation/{{parentMenuId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: {{contentType}}
+
+{
+  "isActive": false
+}
+
+### Delete Menu (Will also remove child menus due to foreign key constraint)
+DELETE {{baseUrl}}/navigation/{{parentMenuId}}
+Authorization: Bearer {{accessToken}} 
