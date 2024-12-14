@@ -13,6 +13,8 @@ import {
   TokensDto,
 } from '@modules/auth/domain/dtos/auth.dto';
 import { User } from '@modules/users/domain/entities/user.entity';
+import { Request } from 'express';
+import { UserService } from '@modules/users/application/services/user.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +22,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly userService: UserService,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<TokensDto> {
@@ -41,7 +44,7 @@ export class AuthService {
     return tokens;
   }
 
-  async login(loginDto: LoginDto): Promise<TokensDto> {
+  async login(loginDto: LoginDto, req: Request): Promise<TokensDto> {
     const user = await this.userRepository.findByEmail(loginDto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -54,6 +57,12 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    await this.userService.updateLoginInfo(
+      user.id,
+      req.ip,
+      req.headers['user-agent'],
+    );
 
     const tokens = await this.generateTokens(user);
     await this.updateRefreshToken(user.id, tokens.refreshToken);

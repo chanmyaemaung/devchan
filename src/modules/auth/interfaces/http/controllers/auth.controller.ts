@@ -31,8 +31,8 @@ export class AuthController {
   @Version('1')
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() loginDto: LoginDto): Promise<TokensDto> {
-    return this.authService.login(loginDto);
+  login(@Body() loginDto: LoginDto, @Req() req: Request): Promise<TokensDto> {
+    return this.authService.login(loginDto, req);
   }
 
   @Version('1')

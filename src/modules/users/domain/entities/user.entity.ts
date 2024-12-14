@@ -60,6 +60,15 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
+  @Column({ nullable: true })
+  theme?: string;
+
+  @Column({ nullable: true })
+  language?: string;
+
+  @Column({ nullable: true })
+  lastLoginAt?: Date;
+
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);
   }
