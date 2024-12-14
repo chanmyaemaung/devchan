@@ -60,10 +60,10 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: 'light' })
   theme?: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: 'en' })
   language?: string;
 
   @Column({ nullable: true })
