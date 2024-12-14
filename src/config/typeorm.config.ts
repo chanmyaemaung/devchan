@@ -12,5 +12,6 @@ export const getTypeOrmConfig = (
   database: configService.get('POSTGRES_DB'),
   entities: ['dist/**/*.entity{.ts,.js}'],
   synchronize: process.env.NODE_ENV !== 'production',
-  logging: process.env.NODE_ENV !== 'production',
+  logging: ['error'],
+  logger: 'advanced-console',
 });
