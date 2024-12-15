@@ -24,17 +24,7 @@
       "@shared/*": ["shared/*"],
       "@config/*": ["config/*"],
       "@utils/*": ["utils/*"],
-      "@interfaces/*": ["interfaces/*"],
-      "@decorators/*": ["decorators/*"],
-      "@constants/*": ["constants/*"],
-      "@dtos/*": ["dtos/*"],
-      "@entities/*": ["entities/*"],
-      "@repositories/*": ["repositories/*"],
-      "@services/*": ["services/*"],
-      "@guards/*": ["guards/*"],
-      "@middlewares/*": ["middlewares/*"],
-      "@exceptions/*": ["exceptions/*"],
-      "@enums/*": ["enums/*"]
+      "@interfaces/*": ["interfaces/*"]
     }
   }
 }

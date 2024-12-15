@@ -1,7 +1,7 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { config } from 'dotenv';
+import * as dotenv from 'dotenv';
 
-config();
+dotenv.config();
 
 export const dataSourceOptions: DataSourceOptions = {
   type: 'postgres',
