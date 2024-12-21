@@ -1,17 +1,15 @@
-import { config } from 'dotenv';
-import { runSeeds } from './seeds';
-import dataSource from './typeorm.config';
-
-config();
+import { DataSource } from 'typeorm';
+import runSeeds from './seeds';
+import AppDataSource from './typeorm.config';
 
 const seed = async () => {
+  let dataSource: DataSource;
+
   try {
-    await dataSource.initialize();
+    dataSource = await AppDataSource.initialize();
     await runSeeds(dataSource);
-    await dataSource.destroy();
-    process.exit(0);
   } catch (error) {
-    console.error('Error during seeding:', error);
+    console.error('❌ Error during seeding:', error);
     process.exit(1);
   }
 };

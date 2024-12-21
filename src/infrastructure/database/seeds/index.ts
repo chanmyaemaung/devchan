@@ -1,16 +1,22 @@
 import { DataSource } from 'typeorm';
-import { userSeed } from './user.seed';
+import { seedBlogs } from './blog.seed';
+import { seedUsers } from './user.seed';
 
-export const runSeeds = async (dataSource: DataSource) => {
+const runSeeds = async (dataSource: DataSource) => {
   try {
-    console.log('Starting database seeding...');
+    console.log('🌱 Starting database seeding...');
 
-    // Run seeds
-    await userSeed(dataSource);
+    await seedUsers(dataSource);
+    await seedBlogs(dataSource);
 
-    console.log('Database seeding completed successfully');
+    console.log('✅ Database seeding completed successfully');
+    await dataSource.destroy();
+    process.exit(0);
   } catch (error) {
-    console.error('Error during database seeding:', error);
-    throw error;
+    console.error('❌ Database seeding failed:', error);
+    await dataSource.destroy();
+    process.exit(1);
   }
 };
+
+export default runSeeds;

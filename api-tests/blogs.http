@@ -1,0 +1,69 @@
+@baseUrl = http://localhost:3000/api/v1
+@authToken = your_jwt_token_here
+
+### Create a new blog post (Admin only)
+POST {{baseUrl}}/blogs
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": {
+    "en": "Sample Blog Post",
+    "my": "နမူနာ ဘလော့ဂ် ပို့စ်"
+  },
+  "content": {
+    "en": "This is a sample blog post content in English.",
+    "my": "ဤသည်မှာ မြန်မာဘာသာဖြင့် နမူနာ ဘလော့ဂ်ပို့စ် အကြောင်းအရာ ဖြစ်ပါသည်။"
+  },
+  "excerpt": {
+    "en": "A brief excerpt of the blog post",
+    "my": "ဘလော့ဂ်ပို့စ်၏ အကျဉ်းချုပ်"
+  },
+  "slug": "sample-blog-post",
+  "tags": ["sample", "test"],
+  "featuredImage": "https://example.com/image.jpg",
+  "isPublished": true,
+  "seoMetadata": {
+    "title": {
+      "en": "Sample Blog Post - SEO Title",
+      "my": "နမူနာ ဘလော့ဂ် ပို့စ် - SEO ခေါင်းစဉ်"
+    },
+    "description": {
+      "en": "SEO description for the blog post",
+      "my": "ဘလော့ဂ်ပို့စ်အတွက် SEO ဖော်ပြချက်"
+    },
+    "keywords": ["sample", "blog", "test"]
+  }
+}
+
+### Get all blog posts
+GET {{baseUrl}}/blogs
+
+### Get published blog posts
+GET {{baseUrl}}/blogs/published
+
+### Get blog posts by tags
+GET {{baseUrl}}/blogs/tags?tags=sample,test
+
+### Get blog post by ID
+GET {{baseUrl}}/blogs/blog_id_here
+
+### Get blog post by slug
+GET {{baseUrl}}/blogs/slug/sample-blog-post
+
+### Update blog post (Admin only)
+PATCH {{baseUrl}}/blogs/blog_id_here
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": {
+    "en": "Updated Blog Post",
+    "my": "မွမ်းမံထားသော ဘလော့ဂ် ပို့စ်"
+  },
+  "isPublished": true
+}
+
+### Delete blog post (Admin only)
+DELETE {{baseUrl}}/blogs/blog_id_here
+Authorization: Bearer {{authToken}} 

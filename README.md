@@ -20,6 +20,65 @@ A secure, scalable, multilingual personal portfolio and blog application built w
 - 🔖 Bookmark System
 - 🌐 Multilingual Content Support
 
+### Blog Management
+
+The blog module provides a complete set of features for managing multilingual blog posts:
+
+#### Endpoints
+
+- `POST /api/v1/blogs` - Create a new blog post (Admin only)
+- `GET /api/v1/blogs` - Get all blog posts
+- `GET /api/v1/blogs/published` - Get published blog posts
+- `GET /api/v1/blogs/tags` - Get blog posts by tags
+- `GET /api/v1/blogs/:id` - Get a specific blog post by ID
+- `GET /api/v1/blogs/slug/:slug` - Get a specific blog post by slug
+- `PATCH /api/v1/blogs/:id` - Update a blog post (Admin only)
+- `DELETE /api/v1/blogs/:id` - Delete a blog post (Admin only)
+
+#### Features
+
+- Multilingual support (English and Burmese)
+- SEO metadata management
+- Tag-based categorization
+- Featured image support
+- Draft/Published status management
+- Unique slug generation
+- Secure admin-only operations
+
+#### Example Usage
+
+```http
+# Create a new blog post
+POST /api/v1/blogs
+{
+  "title": {
+    "en": "Sample Blog Post",
+    "my": "နမူနာ ဘလော့ဂ် ပို့စ်"
+  },
+  "content": {
+    "en": "Content in English",
+    "my": "မြန်မာလို အကြောင်းအရာ"
+  },
+  "excerpt": {
+    "en": "Brief excerpt",
+    "my": "အကျဉ်းချုပ်"
+  },
+  "slug": "sample-blog-post",
+  "tags": ["sample", "test"],
+  "seoMetadata": {
+    "title": {
+      "en": "SEO Title",
+      "my": "SEO ခေါင်းစဉ်"
+    },
+    "description": {
+      "en": "SEO Description",
+      "my": "SEO ဖော်ပြချက်"
+    },
+    "keywords": ["keyword1", "keyword2"]
+  }
+}
+```
+
 ## Prerequisites
 
 - Node.js (v18 or later)
