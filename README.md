@@ -34,72 +34,45 @@ A secure, scalable, multilingual personal portfolio and blog application built w
 
 ### Blog Management
 
-The blog module provides a complete set of features for managing multilingual blog posts:
-
-#### Blog Endpoints
-
-- `POST /api/v1/blogs` - Create a new blog post (Admin only)
-- `GET /api/v1/blogs` - Get all blog posts
-- `GET /api/v1/blogs/published` - Get published blog posts
-- `GET /api/v1/blogs/tags` - Get blog posts by tags
-- `GET /api/v1/blogs/:id` - Get a specific blog post by ID
-- `GET /api/v1/blogs/slug/:slug` - Get a specific blog post by slug
-- `PATCH /api/v1/blogs/:id` - Update a blog post (Admin only)
-- `DELETE /api/v1/blogs/:id` - Delete a blog post (Admin only)
+- CRUD operations for blog posts
+- Multilingual support (English and Burmese)
+- Rich text content with inline images
+- SEO optimization
+- Content organization with tags
+- Image upload and management with Cloudinary
+- Pagination support for blog listings
+  - Customizable page size (1-50 items per page)
+  - Page navigation with metadata
+  - Sorting by creation/publication date
 
 ### Comment System
 
-The comment system allows users to interact with blog posts through comments:
+- CRUD operations for comments
+- Association with blog posts and users
+- Edit history tracking
+- Pagination support for comment listings
 
-#### Comment Endpoints
+### Response Format
 
-- `POST /api/v1/comments` - Create a new comment (Authenticated)
-- `GET /api/v1/comments/blog/:blogId` - Get all comments for a blog post
-- `GET /api/v1/comments/user/:userId` - Get all comments by a user
-- `GET /api/v1/comments/:id` - Get a specific comment
-- `PATCH /api/v1/comments/:id` - Update own comment (Authenticated)
-- `DELETE /api/v1/comments/:id` - Delete own comment (Authenticated)
+All paginated responses follow this structure:
 
-#### Example Usage
-
-```http
-# Create a new blog post
-POST /api/v1/blogs
+```json
 {
-  "title": {
-    "en": "Sample Blog Post",
-    "my": "နမူနာ ဘလော့ဂ် ပို့စ်"
-  },
-  "content": {
-    "en": "Content in English",
-    "my": "မြန်မာလို အကြောင်းအရာ"
-  },
-  "excerpt": {
-    "en": "Brief excerpt",
-    "my": "အကျဉ်းချုပ်"
-  },
-  "slug": "sample-blog-post",
-  "tags": ["sample", "test"],
-  "seoMetadata": {
-    "title": {
-      "en": "SEO Title",
-      "my": "SEO ခေါင်းစဉ်"
-    },
-    "description": {
-      "en": "SEO Description",
-      "my": "SEO ဖော်ပြချက်"
-    },
-    "keywords": ["keyword1", "keyword2"]
+  "data": T[],
+  "meta": {
+    "total": number,
+    "page": number,
+    "lastPage": number,
+    "hasNextPage": boolean,
+    "hasPrevPage": boolean
   }
 }
-
-# Add a comment to a blog post
-POST /api/v1/comments
-{
-  "content": "This is a great article!",
-  "blogId": "blog-uuid-here"
-}
 ```
+
+### Pagination Parameters
+
+- `page` (optional) - Page number (default: 1)
+- `limit` (optional) - Items per page (default: 10, max: 50)
 
 ## Prerequisites
 
@@ -197,6 +170,79 @@ http://localhost:8000/api/docs
   - Logout user
   - Requires: Valid access token
   - Clears authentication cookies
+
+### Blog Endpoints
+
+- `GET /api/v1/blogs?page=1&limit=10` - Get all blog posts (admin only)
+- `GET /api/v1/blogs/published?page=1&limit=10` - Get all published blog posts (public)
+- `GET /api/v1/blogs/:id` - Get a specific blog post
+- `GET /api/v1/blogs/slug/:slug` - Get a blog post by slug
+- `POST /api/v1/blogs` - Create a new blog post (admin only)
+- `PATCH /api/v1/blogs/:id` - Update a blog post (admin only)
+- `DELETE /api/v1/blogs/:id` - Delete a blog post (admin only)
+
+### Comment Endpoints
+
+- `GET /api/v1/comments/blog/:blogId?page=1&limit=10` - Get comments for a blog post
+- `GET /api/v1/comments/user/:userId?page=1&limit=10` - Get comments by a user
+- `POST /api/v1/comments` - Create a new comment
+- `PATCH /api/v1/comments/:id` - Update a comment
+- `DELETE /api/v1/comments/:id` - Delete a comment
+
+### Example Usage
+
+```http
+# Get published blog posts with pagination
+GET /api/v1/blogs/published?page=1&limit=10
+
+# Create a new blog post
+POST /api/v1/blogs
+{
+  "title": {
+    "en": "Sample Blog Post",
+    "my": "နမူနာ ဘလော့ဂ် ပို့စ်"
+  },
+  "content": {
+    "en": "Content in English",
+    "my": "မြန်မာလို အကြောင်းအရာ",
+    "images": [
+      {
+        "url": "https://example.com/image1.jpg",
+        "caption": "Image Caption",
+        "altText": "Alt Text"
+      }
+    ]
+  },
+  "excerpt": {
+    "en": "Brief excerpt",
+    "my": "အကျဉ်းချုပ်"
+  },
+  "slug": "sample-blog-post",
+  "tags": ["sample", "test"],
+  "featuredImage": "https://example.com/featured.jpg",
+  "seoMetadata": {
+    "title": {
+      "en": "SEO Title",
+      "my": "SEO ခေါင်းစဉ်"
+    },
+    "description": {
+      "en": "SEO Description",
+      "my": "SEO ဖော်ပြချက်"
+    },
+    "keywords": ["keyword1", "keyword2"]
+  }
+}
+
+# Get comments for a blog post with pagination
+GET /api/v1/comments/blog/123e4567-e89b-12d3-a456-426614174000?page=1&limit=10
+
+# Add a comment to a blog post
+POST /api/v1/comments
+{
+  "content": "This is a great article!",
+  "blogId": "123e4567-e89b-12d3-a456-426614174000"
+}
+```
 
 ## Environment Variables
 

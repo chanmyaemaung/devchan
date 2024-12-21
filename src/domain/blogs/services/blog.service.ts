@@ -1,15 +1,17 @@
+import { PaginatedResponse, PaginationDto } from '@core/dtos/pagination.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { CreateBlogDto, MultilingualContent } from '../dtos/create-blog.dto';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
 import { Blog } from '../entities/blog.entity';
+import { BlogRepository } from '../repositories/blog.repository';
 
 @Injectable()
 export class BlogService {
   constructor(
-    @InjectRepository(Blog)
-    private readonly blogRepository: Repository<Blog>,
+    @InjectRepository(BlogRepository)
+    private readonly blogRepository: BlogRepository,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -56,15 +58,49 @@ export class BlogService {
     };
   }
 
-  async findAll(): Promise<Blog[]> {
-    return this.blogRepository.find();
+  async findAll(pagination: PaginationDto): Promise<PaginatedResponse<Blog>> {
+    const [data, total] = await this.blogRepository.findAndCount({
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
+      order: { createdAt: 'DESC' },
+    });
+
+    const lastPage = Math.ceil(total / pagination.limit);
+
+    return {
+      data,
+      meta: {
+        total,
+        page: pagination.page,
+        lastPage,
+        hasNextPage: pagination.page < lastPage,
+        hasPrevPage: pagination.page > 1,
+      },
+    };
   }
 
-  async findAllPublished(): Promise<Blog[]> {
-    return this.blogRepository.find({
+  async findAllPublished(
+    pagination: PaginationDto,
+  ): Promise<PaginatedResponse<Blog>> {
+    const [data, total] = await this.blogRepository.findAndCount({
       where: { isPublished: true },
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
       order: { publishedAt: 'DESC' },
     });
+
+    const lastPage = Math.ceil(total / pagination.limit);
+
+    return {
+      data,
+      meta: {
+        total,
+        page: pagination.page,
+        lastPage,
+        hasNextPage: pagination.page < lastPage,
+        hasPrevPage: pagination.page > 1,
+      },
+    };
   }
 
   async findOne(id: string): Promise<Blog> {

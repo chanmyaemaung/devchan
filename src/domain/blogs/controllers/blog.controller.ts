@@ -1,4 +1,5 @@
 import { Roles } from '@core/decorators/roles.decorator';
+import { PaginatedResponse, PaginationDto } from '@core/dtos/pagination.dto';
 import { Role } from '@core/enums/role.enum';
 import { JwtAuthGuard } from '@core/guards/jwt-auth.guard';
 import { RolesGuard } from '@core/guards/roles.guard';
@@ -10,6 +11,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -46,25 +48,22 @@ export class BlogController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all blog posts' })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns all blog posts.',
-    type: [Blog],
-  })
-  findAll() {
-    return this.blogService.findAll();
+  @ApiOperation({ summary: 'Get all blog posts (admin)' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @ApiBearerAuth()
+  findAll(
+    @Query() pagination: PaginationDto,
+  ): Promise<PaginatedResponse<Blog>> {
+    return this.blogService.findAll(pagination);
   }
 
   @Get('published')
-  @ApiOperation({ summary: 'Get all published blog posts' })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns all published blog posts.',
-    type: [Blog],
-  })
-  findPublished() {
-    return this.blogService.findAllPublished();
+  @ApiOperation({ summary: 'Get all published blog posts (public)' })
+  findAllPublished(
+    @Query() pagination: PaginationDto,
+  ): Promise<PaginatedResponse<Blog>> {
+    return this.blogService.findAllPublished(pagination);
   }
 
   @Get('tags')
