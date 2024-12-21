@@ -1,0 +1,51 @@
+@baseUrl = {{$dotenv baseUrl}}
+@contentType = {{$dotenv contentType}}
+
+### Register a new user
+# @name register
+POST {{baseUrl}}/auth/register
+Content-Type: {{contentType}}
+
+{
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "Test@123"
+}
+
+### Login with admin credentials
+# @name adminLogin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "email": "admin@example.com",
+    "password": "Admin@123"
+}
+
+### Login with regular user credentials
+# @name userLogin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "email": "user@example.com",
+    "password": "User@123"
+}
+
+### Login with test user credentials
+# @name testLogin
+POST {{baseUrl}}/auth/login
+Content-Type: {{contentType}}
+
+{
+    "email": "test@example.com",
+    "password": "Test@123"
+}
+
+### Refresh token (requires refresh_token cookie)
+# @name refresh
+GET {{baseUrl}}/auth/refresh
+
+### Logout (requires access_token cookie)
+# @name logout
+POST {{baseUrl}}/auth/logout 
