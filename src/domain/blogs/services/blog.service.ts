@@ -1,6 +1,7 @@
 import { PaginatedResponse, PaginationDto } from '@core/dtos/pagination.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { isUUID } from 'class-validator';
 import { DataSource } from 'typeorm';
 import { CreateBlogDto, MultilingualContent } from '../dtos/create-blog.dto';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
@@ -190,5 +191,19 @@ export class BlogService {
     });
 
     return Array.from(tagsSet);
+  }
+
+  async findByIdentifier(identifier: string): Promise<Blog> {
+    // Try finding by UUID first
+    if (isUUID(identifier)) {
+      const blog = await this.findOne(identifier);
+      if (blog && blog.isPublished) return blog;
+    }
+
+    // If not UUID or not found, try finding by slug
+    const blog = await this.findBySlug(identifier);
+    if (blog && blog.isPublished) return blog;
+
+    throw new NotFoundException(`Blog post not found`);
   }
 }

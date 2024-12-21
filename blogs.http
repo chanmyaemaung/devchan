@@ -1,0 +1,59 @@
+@baseUrl = http://localhost:3000/api/v1
+@contentType = application/json
+@authToken = your_admin_jwt_token_here
+
+### Public Routes ###
+
+### Get all published blog posts (Public)
+GET {{baseUrl}}/blogs
+
+### Get blog post by ID or slug (Public)
+GET {{baseUrl}}/blogs/sample-blog-post
+# or
+GET {{baseUrl}}/blogs/123e4567-e89b-12d3-a456-426614174000
+
+### Get all unique tags (Public)
+GET {{baseUrl}}/blogs/tags
+
+### Admin Routes ###
+
+### Create a new blog post (Admin only)
+POST {{baseUrl}}/blogs
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "title": {
+    "en": "Sample Blog Post",
+    "my": "နမူနာ ဘလော့ဂ် ပို့စ်"
+  },
+  "content": {
+    "en": "This is a sample blog post content in English.",
+    "my": "မြန်မာလို ရေးထားတဲ့ နမူနာ ဘလော့ဂ် အကြောင်းအရာ။",
+    "images": []
+  },
+  "excerpt": {
+    "en": "A brief excerpt of the blog post",
+    "my": "ဘလော့ဂ်ရဲ့ အတိုချုပ် ဖော်ပြချက်"
+  },
+  "slug": "sample-blog-post",
+  "tags": "sample,test,blog",
+  "isPublished": true
+}
+
+### Update a blog post (Admin only)
+PATCH {{baseUrl}}/blogs/blog_id_here
+Authorization: Bearer {{authToken}}
+Content-Type: {{contentType}}
+
+{
+  "title": {
+    "en": "Updated Blog Post",
+    "my": "မွမ်းမံထားသော ဘလော့ဂ် ပို့စ်"
+  },
+  "isPublished": true
+}
+
+### Delete a blog post (Admin only)
+DELETE {{baseUrl}}/blogs/blog_id_here
+Authorization: Bearer {{authToken}}

@@ -31,11 +31,57 @@ import { BlogService } from '../services/blog.service';
 export class BlogController {
   constructor(private readonly blogService: BlogService) {}
 
+  // Public Routes
+  @Get()
+  @ApiOperation({ summary: 'Get all published blog posts (Public)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns paginated published blog posts.',
+    type: Blog,
+  })
+  findAll(
+    @Query() pagination: PaginationDto,
+  ): Promise<PaginatedResponse<Blog>> {
+    return this.blogService.findAllPublished(pagination);
+  }
+
+  @Get(':identifier')
+  @ApiOperation({ summary: 'Get a blog post by ID or slug (Public)' })
+  @ApiParam({
+    name: 'identifier',
+    description: 'The UUID or slug of the blog post',
+    type: 'string',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the blog post.',
+    type: Blog,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Blog post not found.',
+  })
+  findOne(@Param('identifier') identifier: string) {
+    return this.blogService.findByIdentifier(identifier);
+  }
+
+  @Get('tags')
+  @ApiOperation({ summary: 'Get all unique tags from blog posts (Public)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns all unique tags.',
+    type: [String],
+  })
+  findAllTags() {
+    return this.blogService.findAllTags();
+  }
+
+  // Admin Routes
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a new blog post' })
+  @ApiOperation({ summary: 'Create a new blog post (Admin only)' })
   @ApiResponse({
     status: 201,
     description: 'Blog post created successfully.',
@@ -47,82 +93,11 @@ export class BlogController {
     return this.blogService.create(createBlogDto);
   }
 
-  @Get()
-  @ApiOperation({ summary: 'Get all blog posts (admin)' })
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
-  @ApiBearerAuth()
-  findAll(
-    @Query() pagination: PaginationDto,
-  ): Promise<PaginatedResponse<Blog>> {
-    return this.blogService.findAll(pagination);
-  }
-
-  @Get('published')
-  @ApiOperation({ summary: 'Get all published blog posts (public)' })
-  findAllPublished(
-    @Query() pagination: PaginationDto,
-  ): Promise<PaginatedResponse<Blog>> {
-    return this.blogService.findAllPublished(pagination);
-  }
-
-  @Get('tags')
-  @ApiOperation({ summary: 'Get all unique tags from blog posts' })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns all unique tags.',
-    type: [String],
-  })
-  findAllTags() {
-    return this.blogService.findAllTags();
-  }
-
-  @Get(':id')
-  @ApiOperation({ summary: 'Get a blog post by ID' })
-  @ApiParam({
-    name: 'id',
-    description: 'The UUID of the blog post',
-    type: 'string',
-    format: 'uuid',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns the blog post.',
-    type: Blog,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Blog post not found.',
-  })
-  findOne(@Param('id') id: string) {
-    return this.blogService.findOne(id);
-  }
-
-  @Get('slug/:slug')
-  @ApiOperation({ summary: 'Get a blog post by slug' })
-  @ApiParam({
-    name: 'slug',
-    description: 'The slug of the blog post',
-    type: 'string',
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns the blog post.',
-    type: Blog,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Blog post not found.',
-  })
-  findBySlug(@Param('slug') slug: string) {
-    return this.blogService.findBySlug(slug);
-  }
-
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update a blog post' })
+  @ApiOperation({ summary: 'Update a blog post (Admin only)' })
   @ApiParam({
     name: 'id',
     description: 'The UUID of the blog post to update',
@@ -145,7 +120,7 @@ export class BlogController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Delete a blog post' })
+  @ApiOperation({ summary: 'Delete a blog post (Admin only)' })
   @ApiParam({
     name: 'id',
     description: 'The UUID of the blog post to delete',
