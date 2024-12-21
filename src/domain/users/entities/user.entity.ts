@@ -4,9 +4,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Comment } from '../../blogs/entities/comment.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -70,6 +72,9 @@ export class User {
   @ApiProperty()
   @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 
   constructor(partial: Partial<User>) {
     Object.assign(this, partial);

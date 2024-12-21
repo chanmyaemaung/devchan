@@ -5,9 +5,6 @@ import { DataSource } from 'typeorm';
 export const seedUsers = async (dataSource: DataSource): Promise<void> => {
   const userRepository = dataSource.getRepository(User);
 
-  // Clear existing users
-  await userRepository.clear();
-
   // Create admin user
   const adminUser = new User({
     name: 'Admin User',

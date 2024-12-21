@@ -1,6 +1,7 @@
 import { AuthModule } from '@domain/auth/auth.module';
 import { BlogModule } from '@domain/blogs/blog.module';
 import { Blog } from '@domain/blogs/entities/blog.entity';
+import { Comment } from '@domain/blogs/entities/comment.entity';
 import { User } from '@domain/users/entities/user.entity';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -50,7 +51,7 @@ import { LoggerModule } from 'nestjs-pino';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [User, Blog],
+        entities: [User, Blog, Comment],
         synchronize: false,
         logging: configService.get('NODE_ENV') === 'development',
       }),

@@ -10,21 +10,33 @@ A secure, scalable, multilingual personal portfolio and blog application built w
   - Password hashing with Argon2
   - Role-based access control (Admin/User)
   - User session tracking (last login, IP, user agent)
-- 📝 Blog Management with Multilingual Support
+- 📝 **Blog Management**
+  - Multilingual support (English and Burmese)
+  - SEO metadata management
+  - Tag-based categorization
+  - Featured image support
+  - Draft/Published status management
+  - Unique slug generation
+  - Secure admin-only operations
+- 💬 **Comment System**
+  - User authentication for commenting
+  - Edit/Delete own comments
+  - Comment history tracking
+  - User-comment relationship
+  - Blog-comment relationship
 - 🖼️ Project Portfolio Showcase
 - 💾 Cloudinary Integration for Media Storage
 - 🔄 Redis Caching for Performance
 - 🛡️ Rate Limiting for Security
 - 📧 Email Notifications
-- 💬 Comment System
-- 🔖 Bookmark System
+- 💬 Bookmark System
 - 🌐 Multilingual Content Support
 
 ### Blog Management
 
 The blog module provides a complete set of features for managing multilingual blog posts:
 
-#### Endpoints
+#### Blog Endpoints
 
 - `POST /api/v1/blogs` - Create a new blog post (Admin only)
 - `GET /api/v1/blogs` - Get all blog posts
@@ -35,15 +47,18 @@ The blog module provides a complete set of features for managing multilingual bl
 - `PATCH /api/v1/blogs/:id` - Update a blog post (Admin only)
 - `DELETE /api/v1/blogs/:id` - Delete a blog post (Admin only)
 
-#### Features
+### Comment System
 
-- Multilingual support (English and Burmese)
-- SEO metadata management
-- Tag-based categorization
-- Featured image support
-- Draft/Published status management
-- Unique slug generation
-- Secure admin-only operations
+The comment system allows users to interact with blog posts through comments:
+
+#### Comment Endpoints
+
+- `POST /api/v1/comments` - Create a new comment (Authenticated)
+- `GET /api/v1/comments/blog/:blogId` - Get all comments for a blog post
+- `GET /api/v1/comments/user/:userId` - Get all comments by a user
+- `GET /api/v1/comments/:id` - Get a specific comment
+- `PATCH /api/v1/comments/:id` - Update own comment (Authenticated)
+- `DELETE /api/v1/comments/:id` - Delete own comment (Authenticated)
 
 #### Example Usage
 
@@ -76,6 +91,13 @@ POST /api/v1/blogs
     },
     "keywords": ["keyword1", "keyword2"]
   }
+}
+
+# Add a comment to a blog post
+POST /api/v1/comments
+{
+  "content": "This is a great article!",
+  "blogId": "blog-uuid-here"
 }
 ```
 

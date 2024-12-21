@@ -125,9 +125,6 @@ In this post, we'll cover:
     },
   ];
 
-  // Clear existing blogs
-  await blogRepository.clear();
-
   // Insert new blogs
   for (const blog of blogs) {
     await blogRepository.save(blog);
