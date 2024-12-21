@@ -7,6 +7,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from 'nestjs-pino';
+import { StorageModule } from './infrastructure/storage/storage.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { LoggerModule } from 'nestjs-pino';
     }),
     AuthModule,
     BlogModule,
+    StorageModule,
   ],
 })
 export class AppModule {}
