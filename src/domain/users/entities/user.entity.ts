@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import {
   Column,
@@ -14,19 +15,23 @@ export enum UserRole {
 
 @Entity('users')
 export class User {
+  @ApiProperty({ example: 'uuid-v4' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty({ example: 'John Doe', maxLength: 100 })
   @Column({ length: 100 })
   name: string;
 
+  @ApiProperty({ example: 'john.doe@example.com' })
   @Column({ unique: true })
   email: string;
 
-  @Column()
   @Exclude()
+  @Column()
   password: string;
 
+  @ApiProperty({ enum: UserRole, default: UserRole.USER })
   @Column({
     type: 'enum',
     enum: UserRole,
@@ -34,29 +39,36 @@ export class User {
   })
   role: UserRole;
 
+  @ApiProperty({ required: false, nullable: true })
   @Column({ nullable: true })
-  avatar?: string;
+  avatar: string;
 
-  @Column({ default: true })
+  @ApiProperty({ default: true })
+  @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @Column({ nullable: true })
-  lastLoginAt?: Date;
+  @ApiProperty({ required: false, nullable: true })
+  @Column({ name: 'last_login_at', nullable: true })
+  lastLoginAt: Date;
 
-  @Column({ nullable: true })
-  lastLoginIp?: string;
+  @ApiProperty({ required: false, nullable: true })
+  @Column({ name: 'last_login_ip', nullable: true })
+  lastLoginIp: string;
 
-  @Column({ nullable: true })
-  userAgent?: string;
+  @ApiProperty({ required: false, nullable: true })
+  @Column({ name: 'user_agent', nullable: true })
+  userAgent: string;
 
-  @Column({ nullable: true })
   @Exclude()
-  refreshToken?: string;
+  @Column({ name: 'refresh_token', nullable: true })
+  refreshToken: string;
 
-  @CreateDateColumn()
+  @ApiProperty()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @ApiProperty()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
   constructor(partial: Partial<User>) {
