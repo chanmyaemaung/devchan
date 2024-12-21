@@ -1,0 +1,41 @@
+@baseUrl = {{$dotenv baseUrl}}
+@contentType = {{$dotenv contentType}}
+@authToken = {{$dotenv authToken}}
+
+### Test GET /users - Fetch all users
+GET {{baseUrl}}/users
+Authorization: Bearer {{authToken}}
+### Expected: Status 200 OK
+
+### Test POST /users - Create a new user
+POST {{baseUrl}}/users
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "password": "securePassword123"
+}
+### Expected: Status 201 Created
+
+### Test GET /users/:id - Fetch user by ID
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{authToken}}
+### Expected: Status 200 OK
+
+### Test PUT /users/:id - Update user
+PUT {{baseUrl}}/users/1
+Content-Type: {{contentType}}
+Authorization: Bearer {{authToken}}
+
+{
+    "name": "John Updated",
+    "email": "john.updated@example.com"
+}
+### Expected: Status 200 OK
+
+### Test DELETE /users/:id - Delete user
+DELETE {{baseUrl}}/users/1
+Authorization: Bearer {{authToken}}
+### Expected: Status 204 No Content 
