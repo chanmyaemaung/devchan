@@ -36,12 +36,12 @@ lerna-debug.log*
 !.vscode/extensions.json
 .cursorrules
 
-# dotenv environment variable files
+# Environment
 .env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+
+# Docker
+postgres_data/
+redis_data/
 
 # temp directory
 .temp
