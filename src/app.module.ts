@@ -3,11 +3,41 @@ import { User } from '@domain/users/entities/user.entity';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    LoggerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const isDevelopment = configService.get('NODE_ENV') === 'development';
+        return {
+          pinoHttp: {
+            transport: isDevelopment
+              ? {
+                  target: 'pino-pretty',
+                  options: {
+                    singleLine: true,
+                    colorize: true,
+                    levelFirst: true,
+                    translateTime: "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'",
+                  },
+                }
+              : undefined,
+            level: isDevelopment ? 'debug' : 'info',
+            // Redact sensitive information
+            redact: [
+              'req.headers.authorization',
+              'req.headers.cookie',
+              'res.headers["set-cookie"]',
+            ],
+          },
+        };
+      },
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
