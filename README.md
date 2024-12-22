@@ -41,10 +41,10 @@ A secure, scalable, multilingual personal portfolio and blog application built w
 - ✅ API Documentation with Swagger
 - ✅ Database Schema and Migrations
 - ✅ Path Aliases Configuration
+- ✅ Comment System with HTTP-only Cookie Authentication
 
 #### In Progress
 
-- 🚧 Comment System Implementation
 - 🚧 Media Storage Integration
 
 #### Upcoming Features
@@ -70,18 +70,86 @@ A secure, scalable, multilingual personal portfolio and blog application built w
 
 ### Comment System
 
-- CRUD operations for comments
-- Association with blog posts and users
-- Edit history tracking
-- Pagination support for comment listings
+The comment system allows users to interact with blog posts through comments. Key features include:
 
-### Response Format
+- ✅ CRUD operations for comments
+- ✅ Public access to view comments
+- ✅ Authentication required for creating, updating, and deleting comments
+- ✅ Comment ownership validation
+- ✅ Pagination support for comment listings
+- ✅ Transaction support for data consistency
+- ✅ User-comment and blog-comment relationships
+- ✅ HTTP-only cookie-based authentication
 
-All paginated responses follow this structure:
+#### Comment Endpoints
+
+- `GET /api/v1/comments/blog/:blogId` - Get all comments for a blog post (public)
+- `GET /api/v1/comments/user/:userId` - Get all comments by a user (public)
+- `POST /api/v1/comments` - Create a new comment (authenticated users only)
+- `PATCH /api/v1/comments/:id` - Update a comment (comment owner only)
+- `DELETE /api/v1/comments/:id` - Delete a comment (comment owner only)
+
+Example usage with `curl`:
+
+```bash
+# Login and save cookies
+curl -X POST "http://localhost:8000/api/v1/auth/login" \
+     -H "Content-Type: application/json" \
+     -d '{"email":"admin@example.com","password":"Admin@123"}' \
+     -c cookies.txt
+
+# Get comments for a blog post with pagination
+curl -X GET "http://localhost:8000/api/v1/comments/blog/123e4567-e89b-12d3-a456-426614174000?page=1&limit=10"
+
+# Create a new comment (authenticated)
+curl -X POST "http://localhost:8000/api/v1/comments" \
+     -H "Content-Type: application/json" \
+     -b cookies.txt \
+     -d '{
+       "content": "This is a great article!",
+       "blogId": "123e4567-e89b-12d3-a456-426614174000"
+     }'
+
+# Update a comment (comment owner only)
+curl -X PATCH "http://localhost:8000/api/v1/comments/123e4567-e89b-12d3-a456-426614174000" \
+     -H "Content-Type: application/json" \
+     -b cookies.txt \
+     -d '{
+       "content": "This is an updated comment!"
+     }'
+
+# Delete a comment (comment owner only)
+curl -X DELETE "http://localhost:8000/api/v1/comments/123e4567-e89b-12d3-a456-426614174000" \
+     -b cookies.txt
+```
+
+#### Response Format
+
+Comments are returned with the following structure:
 
 ```json
 {
-  "data": T[],
+  "id": "uuid",
+  "content": "string",
+  "blogId": "uuid",
+  "userId": "uuid",
+  "isEdited": boolean,
+  "createdAt": "timestamp",
+  "updatedAt": "timestamp",
+  "user": {
+    "id": "uuid",
+    "name": "string",
+    "email": "string",
+    "role": "string"
+  }
+}
+```
+
+For paginated responses:
+
+```json
+{
+  "data": Comment[],
   "meta": {
     "total": number,
     "page": number,
