@@ -1,45 +1,36 @@
-@baseUrl = http://localhost:3000/api/v1
-@authToken = your_jwt_token_here
+@baseUrl = http://localhost:8000/api/v1
+@contentType = application/json
+@authToken = your_admin_jwt_token_here
+
+### Public Routes ###
+
+### Get all comments for a blog post (Public)
+GET {{baseUrl}}/comments/blog/123e4567-e89b-12d3-a456-426614174000?page=1&limit=10
+
+### Get all comments by a user (Public)
+GET {{baseUrl}}/comments/user/123e4567-e89b-12d3-a456-426614174000?page=1&limit=10
+
+### Authenticated Routes ###
 
 ### Create a new comment (Authenticated)
-# Requires: Valid JWT token
-# Creates a new comment on a blog post
 POST {{baseUrl}}/comments
 Authorization: Bearer {{authToken}}
-Content-Type: application/json
+Content-Type: {{contentType}}
 
 {
-  "content": "This is a test comment. Great article!",
-  "blogId": "blog_id_here"
+  "content": "This is a great article!",
+  "blogId": "123e4567-e89b-12d3-a456-426614174000"
 }
 
-### Get all comments for a blog post
-# Returns: Array of comments with user information
-# Sorted by: Created date (newest first)
-GET {{baseUrl}}/comments/blog/blog_id_here
-
-### Get all comments by a user
-# Returns: Array of comments with blog information
-# Sorted by: Created date (newest first)
-GET {{baseUrl}}/comments/user/user_id_here
-
-### Get a specific comment by ID
-# Returns: Single comment with user and blog information
-GET {{baseUrl}}/comments/comment_id_here
-
-### Update a comment (Authenticated, only owner)
-# Requires: Valid JWT token
-# Updates: Only if the authenticated user is the comment owner
-PATCH {{baseUrl}}/comments/comment_id_here
+### Update a comment (Comment owner only)
+PATCH {{baseUrl}}/comments/123e4567-e89b-12d3-a456-426614174000
 Authorization: Bearer {{authToken}}
-Content-Type: application/json
+Content-Type: {{contentType}}
 
 {
-  "content": "Updated comment content. This article is really helpful!"
+  "content": "This is an updated comment!"
 }
 
-### Delete a comment (Authenticated, only owner)
-# Requires: Valid JWT token
-# Deletes: Only if the authenticated user is the comment owner
-DELETE {{baseUrl}}/comments/comment_id_here
+### Delete a comment (Comment owner only)
+DELETE {{baseUrl}}/comments/123e4567-e89b-12d3-a456-426614174000
 Authorization: Bearer {{authToken}} 

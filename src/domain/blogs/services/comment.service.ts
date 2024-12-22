@@ -1,3 +1,5 @@
+import { PaginatedResponse, PaginationDto } from '@core/dtos/pagination.dto';
+import { User } from '@domain/users/entities/user.entity';
 import {
   ForbiddenException,
   Injectable,
@@ -7,54 +9,87 @@ import { DataSource } from 'typeorm';
 import { CreateCommentDto } from '../dtos/create-comment.dto';
 import { UpdateCommentDto } from '../dtos/update-comment.dto';
 import { Comment } from '../entities/comment.entity';
-import { BlogRepository } from '../repositories/blog.repository';
 import { CommentRepository } from '../repositories/comment.repository';
+import { BlogService } from './blog.service';
 
 @Injectable()
 export class CommentService {
   constructor(
     private readonly commentRepository: CommentRepository,
-    private readonly blogRepository: BlogRepository,
+    private readonly blogService: BlogService,
     private readonly dataSource: DataSource,
   ) {}
 
   async create(
-    userId: string,
     createCommentDto: CreateCommentDto,
+    user: User,
   ): Promise<Comment> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const blog = await this.blogRepository.findOne({
-        where: { id: createCommentDto.blogId },
-      });
-
-      if (!blog) {
-        throw new NotFoundException(
-          `Blog with ID "${createCommentDto.blogId}" not found`,
-        );
-      }
+      // Check if blog exists
+      await this.blogService.findOne(createCommentDto.blogId);
 
       const comment = this.commentRepository.create({
         ...createCommentDto,
-        userId,
+        userId: user.id,
       });
 
       return await transactionalEntityManager.save(Comment, comment);
     });
   }
 
-  async findAll(): Promise<Comment[]> {
-    return this.commentRepository.find({
-      relations: ['user', 'blog'],
+  async findAllByBlog(
+    blogId: string,
+    pagination: PaginationDto,
+  ): Promise<PaginatedResponse<Comment>> {
+    // Check if blog exists
+    await this.blogService.findOne(blogId);
+
+    const [data, total] = await this.commentRepository.findAndCount({
+      where: { blogId },
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
       order: { createdAt: 'DESC' },
+      relations: ['user'],
     });
+
+    const lastPage = Math.ceil(total / pagination.limit);
+
+    return {
+      data,
+      meta: {
+        total,
+        page: pagination.page,
+        lastPage,
+        hasNextPage: pagination.page < lastPage,
+        hasPrevPage: pagination.page > 1,
+      },
+    };
   }
 
-  async findByBlogId(blogId: string): Promise<Comment[]> {
-    return this.commentRepository.findByBlogId(blogId);
-  }
+  async findAllByUser(
+    userId: string,
+    pagination: PaginationDto,
+  ): Promise<PaginatedResponse<Comment>> {
+    const [data, total] = await this.commentRepository.findAndCount({
+      where: { userId },
+      skip: (pagination.page - 1) * pagination.limit,
+      take: pagination.limit,
+      order: { createdAt: 'DESC' },
+      relations: ['blog'],
+    });
 
-  async findByUserId(userId: string): Promise<Comment[]> {
-    return this.commentRepository.findByUserId(userId);
+    const lastPage = Math.ceil(total / pagination.limit);
+
+    return {
+      data,
+      meta: {
+        total,
+        page: pagination.page,
+        lastPage,
+        hasNextPage: pagination.page < lastPage,
+        hasPrevPage: pagination.page > 1,
+      },
+    };
   }
 
   async findOne(id: string): Promise<Comment> {
@@ -71,17 +106,15 @@ export class CommentService {
   }
 
   async update(
-    userId: string,
     id: string,
     updateCommentDto: UpdateCommentDto,
+    user: User,
   ): Promise<Comment> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const comment = await this.findOne(id);
 
-      if (comment.userId !== userId) {
-        throw new ForbiddenException(
-          'You are not authorized to update this comment',
-        );
+      if (comment.userId !== user.id) {
+        throw new ForbiddenException('You can only update your own comments');
       }
 
       Object.assign(comment, updateCommentDto);
@@ -91,14 +124,12 @@ export class CommentService {
     });
   }
 
-  async remove(userId: string, id: string): Promise<void> {
+  async remove(id: string, user: User): Promise<void> {
     return this.dataSource.transaction(async (transactionalEntityManager) => {
       const comment = await this.findOne(id);
 
-      if (comment.userId !== userId) {
-        throw new ForbiddenException(
-          'You are not authorized to delete this comment',
-        );
+      if (comment.userId !== user.id) {
+        throw new ForbiddenException('You can only delete your own comments');
       }
 
       await transactionalEntityManager.remove(Comment, comment);
