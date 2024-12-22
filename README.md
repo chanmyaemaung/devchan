@@ -4,13 +4,13 @@ A secure, scalable, multilingual personal portfolio and blog application built w
 
 ## Features
 
-- 🔒 **Secure Authentication & Authorization**
+- ✅ **Secure Authentication & Authorization**
   - JWT-based authentication with access and refresh tokens
   - HTTP-only cookie-based token storage
   - Password hashing with Argon2
   - Role-based access control (Admin/User)
   - User session tracking (last login, IP, user agent)
-- 📝 **Blog Management**
+- ✅ **Blog Management**
   - Multilingual support (English and Burmese)
   - SEO metadata management
   - Tag-based categorization
@@ -18,7 +18,7 @@ A secure, scalable, multilingual personal portfolio and blog application built w
   - Draft/Published status management
   - Unique slug generation
   - Secure admin-only operations
-- 💬 **Comment System**
+- 💬 **Comment System** (In Progress)
   - User authentication for commenting
   - Edit/Delete own comments
   - Comment history tracking
@@ -31,6 +31,29 @@ A secure, scalable, multilingual personal portfolio and blog application built w
 - 📧 Email Notifications
 - 💬 Bookmark System
 - 🌐 Multilingual Content Support
+
+### Implementation Progress
+
+#### Completed Features
+
+- ✅ Core Authentication System
+- ✅ Blog Management System with Multilingual Support
+- ✅ API Documentation with Swagger
+- ✅ Database Schema and Migrations
+- ✅ Path Aliases Configuration
+
+#### In Progress
+
+- 🚧 Comment System Implementation
+- 🚧 Media Storage Integration
+
+#### Upcoming Features
+
+- 🔜 Project Portfolio Module
+- 🔜 Redis Caching
+- 🔜 Rate Limiting
+- 🔜 Email Notifications
+- 🔜 Bookmark System
 
 ### Blog Management
 
@@ -173,13 +196,14 @@ http://localhost:8000/api/docs
 
 ### Blog Endpoints
 
-- `GET /api/v1/blogs?page=1&limit=10` - Get all blog posts (admin only)
-- `GET /api/v1/blogs/published?page=1&limit=10` - Get all published blog posts (public)
-- `GET /api/v1/blogs/:id` - Get a specific blog post
-- `GET /api/v1/blogs/slug/:slug` - Get a blog post by slug
+- `GET /api/v1/blogs` - Get all published blog posts (public)
+- `GET /api/v1/blogs/:identifier` - Get a blog post by ID or slug (public)
+- `GET /api/v1/blogs/tags` - Get all unique tags (public)
 - `POST /api/v1/blogs` - Create a new blog post (admin only)
 - `PATCH /api/v1/blogs/:id` - Update a blog post (admin only)
 - `DELETE /api/v1/blogs/:id` - Delete a blog post (admin only)
+
+All blog endpoints support multilingual content (English and Burmese).
 
 ### Comment Endpoints
 
@@ -292,3 +316,65 @@ The project includes the following Docker services:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+### Path Aliases
+
+The project uses path aliases to simplify imports:
+
+```typescript
+// tsconfig.json
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@core/*": ["src/core/*"],
+      "@libs/*": ["src/libs/*"],
+      "@domain/*": ["src/domain/*"],
+      "@infra/*": ["src/infrastructure/*"],
+      "@config/*": ["src/configs/*"]
+    }
+  }
+}
+```
+
+This allows for cleaner imports:
+
+```typescript
+// Instead of
+import { UserService } from '../../../domain/users/services/user.service';
+
+// You can use
+import { UserService } from '@domain/users/services/user.service';
+```
+
+### Migration History
+
+The project uses TypeORM migrations to manage database schema changes:
+
+```bash
+# Initial Setup
+1703116800000-CreateUsersTable.ts     # Create users table with authentication fields
+1703116800001-SeedUsers.ts            # Seed initial admin and user accounts
+
+# Blog Feature
+1703150000000-CreateBlogsTable.ts     # Create blogs table with multilingual support
+1703150000001-AddBlogContentImages.ts  # Add image support to blog content
+1703150000002-CreateCommentsTable.ts   # Create comments table for blog posts
+1703150000003-AddImageFieldsToBlog.ts  # Add featured image fields to blogs
+```
+
+To run migrations:
+
+```bash
+# Run migrations
+pnpm migration:run
+
+# Generate a new migration
+pnpm migration:generate src/migrations/YourMigrationName
+
+# Create an empty migration
+pnpm migration:create src/migrations/YourMigrationName
+
+# Revert the last migration
+pnpm migration:revert
+```
