@@ -7,12 +7,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from 'nestjs-pino';
-import { StorageModule } from './infrastructure/storage/storage.module';
+import { configValidationSchema } from './configs/config.schema';
+import { StorageModule } from './libs/storage/storage.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      validationSchema: configValidationSchema,
     }),
     LoggerModule.forRootAsync({
       imports: [ConfigModule],

@@ -45,6 +45,17 @@ export class BlogController {
     return this.blogService.findAllPublished(pagination);
   }
 
+  @Get('tags')
+  @ApiOperation({ summary: 'Get all unique tags from blog posts (Public)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns all unique tags.',
+    type: [String],
+  })
+  findAllTags() {
+    return this.blogService.findAllTags();
+  }
+
   @Get(':identifier')
   @ApiOperation({ summary: 'Get a blog post by ID or slug (Public)' })
   @ApiParam({
@@ -63,17 +74,6 @@ export class BlogController {
   })
   findOne(@Param('identifier') identifier: string) {
     return this.blogService.findByIdentifier(identifier);
-  }
-
-  @Get('tags')
-  @ApiOperation({ summary: 'Get all unique tags from blog posts (Public)' })
-  @ApiResponse({
-    status: 200,
-    description: 'Returns all unique tags.',
-    type: [String],
-  })
-  findAllTags() {
-    return this.blogService.findAllTags();
   }
 
   // Admin Routes

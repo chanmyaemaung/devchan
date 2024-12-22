@@ -1,53 +1,46 @@
 import { PaginatedResponse, PaginationDto } from '@core/dtos/pagination.dto';
+import { MultilingualContent } from '@core/types/multilingual.type';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { isUUID } from 'class-validator';
-import { DataSource } from 'typeorm';
-import { CreateBlogDto, MultilingualContent } from '../dtos/create-blog.dto';
+import { CreateBlogDto } from '../dtos/create-blog.dto';
 import { UpdateBlogDto } from '../dtos/update-blog.dto';
 import { Blog } from '../entities/blog.entity';
 import { BlogRepository } from '../repositories/blog.repository';
 
 @Injectable()
 export class BlogService {
-  constructor(
-    @InjectRepository(BlogRepository)
-    private readonly blogRepository: BlogRepository,
-    private readonly dataSource: DataSource,
-  ) {}
+  constructor(private readonly blogRepository: BlogRepository) {}
 
   async create(createBlogDto: CreateBlogDto): Promise<Blog> {
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
-      // Convert DTO to entity format
-      const blogData = {
-        ...createBlogDto,
-        title: this.convertMultilingualToRecord(createBlogDto.title),
-        excerpt: this.convertMultilingualToRecord(createBlogDto.excerpt),
-        content: {
-          en: createBlogDto.content.en,
-          my: createBlogDto.content.my,
-          images: createBlogDto.content.images,
-        },
-        seoMetadata: {
-          title: this.convertMultilingualToRecord(
-            createBlogDto.seoMetadata.title,
-          ),
-          description: this.convertMultilingualToRecord(
-            createBlogDto.seoMetadata.description,
-          ),
-          keywords: createBlogDto.seoMetadata.keywords,
-        },
-      };
+    // Convert DTO to entity format
+    const blogData = {
+      ...createBlogDto,
+      title: this.convertMultilingualToRecord(createBlogDto.title),
+      excerpt: this.convertMultilingualToRecord(createBlogDto.excerpt),
+      content: {
+        en: createBlogDto.content.en,
+        my: createBlogDto.content.my,
+        images: createBlogDto.content.images,
+      },
+      seoMetadata: {
+        title: this.convertMultilingualToRecord(
+          createBlogDto.seoMetadata.title,
+        ),
+        description: this.convertMultilingualToRecord(
+          createBlogDto.seoMetadata.description,
+        ),
+        keywords: createBlogDto.seoMetadata.keywords,
+      },
+    };
 
-      const blog = this.blogRepository.create(
-        blogData as unknown as Partial<Blog>,
-      );
-      if (createBlogDto.isPublished) {
-        blog.publishedAt = new Date();
-      }
+    const blog = this.blogRepository.create(
+      blogData as unknown as Partial<Blog>,
+    );
+    if (createBlogDto.isPublished) {
+      blog.publishedAt = new Date();
+    }
 
-      return await transactionalEntityManager.save(Blog, blog);
-    });
+    return await this.blogRepository.save(blog);
   }
 
   private convertMultilingualToRecord(
@@ -121,59 +114,57 @@ export class BlogService {
   }
 
   async update(id: string, updateBlogDto: UpdateBlogDto): Promise<Blog> {
-    return this.dataSource.transaction(async (transactionalEntityManager) => {
-      const blog = await this.findOne(id);
-      const typedDto = updateBlogDto as CreateBlogDto;
+    const blog = await this.findOne(id);
+    const typedDto = updateBlogDto as CreateBlogDto;
 
-      // Convert DTO to entity format
-      const updateData: Partial<Blog> = {};
+    // Convert DTO to entity format
+    const updateData: Partial<Blog> = {};
 
-      if (typedDto.title) {
-        updateData.title = this.convertMultilingualToRecord(typedDto.title);
-      }
+    if (typedDto.title) {
+      updateData.title = this.convertMultilingualToRecord(typedDto.title);
+    }
 
-      if (typedDto.excerpt) {
-        updateData.excerpt = this.convertMultilingualToRecord(typedDto.excerpt);
-      }
+    if (typedDto.excerpt) {
+      updateData.excerpt = this.convertMultilingualToRecord(typedDto.excerpt);
+    }
 
-      if (typedDto.content) {
-        updateData.content = {
-          en: typedDto.content.en,
-          my: typedDto.content.my,
-          images: typedDto.content.images,
-        };
-      }
+    if (typedDto.content) {
+      updateData.content = {
+        en: typedDto.content.en,
+        my: typedDto.content.my,
+        images: typedDto.content.images,
+      };
+    }
 
-      if (typedDto.seoMetadata) {
-        updateData.seoMetadata = {
-          title: this.convertMultilingualToRecord(typedDto.seoMetadata.title),
-          description: this.convertMultilingualToRecord(
-            typedDto.seoMetadata.description,
-          ),
-          keywords: typedDto.seoMetadata.keywords,
-        };
-      }
+    if (typedDto.seoMetadata) {
+      updateData.seoMetadata = {
+        title: this.convertMultilingualToRecord(typedDto.seoMetadata.title),
+        description: this.convertMultilingualToRecord(
+          typedDto.seoMetadata.description,
+        ),
+        keywords: typedDto.seoMetadata.keywords,
+      };
+    }
 
-      if (typedDto.tags !== undefined) {
-        updateData.tags = typedDto.tags;
-      }
+    if (typedDto.tags !== undefined) {
+      updateData.tags = typedDto.tags;
+    }
 
-      if (typedDto.featuredImage !== undefined) {
-        updateData.featuredImage = typedDto.featuredImage;
-      }
+    if (typedDto.featuredImage !== undefined) {
+      updateData.featuredImage = typedDto.featuredImage;
+    }
 
-      if (typedDto.featuredImagePublicId !== undefined) {
-        updateData.featuredImagePublicId = typedDto.featuredImagePublicId;
-      }
+    if (typedDto.featuredImagePublicId !== undefined) {
+      updateData.featuredImagePublicId = typedDto.featuredImagePublicId;
+    }
 
-      // Handle publishing status
-      if (typedDto.isPublished && !blog.isPublished) {
-        updateData.publishedAt = new Date();
-      }
+    // Handle publishing status
+    if (typedDto.isPublished && !blog.isPublished) {
+      updateData.publishedAt = new Date();
+    }
 
-      Object.assign(blog, updateData);
-      return await transactionalEntityManager.save(Blog, blog);
-    });
+    Object.assign(blog, updateData);
+    return await this.blogRepository.save(blog);
   }
 
   async remove(id: string): Promise<void> {
@@ -182,15 +173,19 @@ export class BlogService {
   }
 
   async findAllTags(): Promise<string[]> {
-    const blogs = await this.blogRepository.find();
-    const tagsSet = new Set<string>();
-
-    blogs.forEach((blog) => {
-      const tags = blog.tags.split(',');
-      tags.forEach((tag) => tagsSet.add(tag.trim()));
+    const blogs = await this.blogRepository.find({
+      where: { isPublished: true },
+      select: ['tags'],
     });
 
-    return Array.from(tagsSet);
+    const allTags = blogs
+      .filter((blog) => blog.tags)
+      .map((blog) => blog.tags)
+      .flat()
+      .map((tag) => tag.trim())
+      .filter((tag) => tag.length > 0);
+
+    return [...new Set(allTags)].sort();
   }
 
   async findByIdentifier(identifier: string): Promise<Blog> {
