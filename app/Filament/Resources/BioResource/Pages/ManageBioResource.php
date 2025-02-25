@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Filament\Resources\BioResource\Pages;
+namespace App\Filament\Resources\TechStackResource\Pages;
 
 use App\Filament\Resources\BioResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ListBios extends ListRecords
+class ManageBioResource extends ManageRecords
 {
     protected static string $resource = BioResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
-            // Actions\CreateAction::make(),
+            Actions\CreateAction::make(),
         ];
     }
 }

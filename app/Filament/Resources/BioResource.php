@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\BioResource\Pages;
 use App\Filament\Resources\BioResource\RelationManagers;
+use App\Filament\Resources\TechStackResource\Pages\ManageBioResource;
 use App\Models\Bio;
 use Faker\Provider\ar_EG\Text;
 use Filament\Forms;
@@ -69,12 +70,13 @@ class BioResource extends Resource
                 TextColumn::make('cta_btn_url')
                     ->label(__('Call to Action Button URL')),
                 TextColumn::make('created_at')
-                    ->label(__('Created At'))
-                    ->formatStateUsing(
-                        fn($record) =>
-                        "Created: " . $record->created_at->format('Y-m-d H:i:s') . "\n" .
-                        "Updated: " . $record->updated_at->format('Y-m-d H:i:s')
-                    )
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 // Filter::make('created_at'),
@@ -104,9 +106,7 @@ class BioResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListBios::route('/'),
-            'create' => Pages\CreateBio::route('/create'),
-            'edit' => Pages\EditBio::route('/{record}/edit'),
+            'index' => ManageBioResource::route('/'),
         ];
     }
 }
