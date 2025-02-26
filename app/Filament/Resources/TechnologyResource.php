@@ -24,7 +24,7 @@ class TechnologyResource extends Resource
 {
     protected static ?string $model = Technology::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-code-bracket';
+    protected static ?string $navigationIcon = 'heroicon-o-cube';
     protected static ?string $navigationGroup = 'Portfolio';
     protected static ?string $navigationLabel = 'Technologies';
     protected static ?int $navigationSort = 2;

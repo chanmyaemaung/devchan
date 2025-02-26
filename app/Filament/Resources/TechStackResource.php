@@ -18,7 +18,7 @@ class TechStackResource extends Resource
 {
     protected static ?string $model = TechStack::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
     protected static ?string $navigationGroup = 'Portfolio';
     protected static ?string $navigationLabel = 'Tech Stacks';
     protected static ?int $navigationSort = 1;
