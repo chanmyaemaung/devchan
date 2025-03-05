@@ -28,7 +28,7 @@ class SettingResource extends Resource
     protected static ?string $model = Setting::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog';
-    protected static ?string $navigationGroup = 'General Settings';
+    protected static ?string $navigationGroup = 'Portfolio Settings';
     protected static ?string $navigationLabel = 'Settings';
     protected static ?int $navigationSort = 2;
 
